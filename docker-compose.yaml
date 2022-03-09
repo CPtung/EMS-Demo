@@ -1,0 +1,29 @@
+version: "3" 
+services:
+  mqtt2prometheus:
+    image: hikhvar/mqtt2prometheus
+    ports:
+      - 9641:9641
+    volumes:
+      - ./mqtt2prometheus/config.yaml:/config.yaml
+    network_mode: host
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus/config.yaml:/etc/prometheus/prometheus.yml
+    network_mode: host
+    depends_on:
+      - mqtt2prometheus
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    network_mode: host
+    depends_on:
+      - prometheus
+
+networks:
+  host:
+    external: true
